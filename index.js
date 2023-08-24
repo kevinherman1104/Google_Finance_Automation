@@ -61,29 +61,36 @@ async function main(){
 
     leftPointStart = graphMidStart - totalGraph_width //start from left most
 
-    var pointer = -276
+    var pointer = parseInt(leftPointStart)
     array_price = []; //array of price
     var price = 0;
-    while (pointer < graphMidStart + 1){
+    while (pointer < graphMidStart + 100){
         //start from the left most
         await browser.$('//div[@class="ushogf"]').click({ x: pointer });
         await browser.pause(1500);
 
         //info: waiting for pop up to be visible
-        status = await browser.$('//p[@class="hSGhwc-SeJRAd"]').waitForDisplayed();
-        assert.equal(status, true);
+        status = await browser.$('//p[@class="hSGhwc-SeJRAd"]').isDisplayed();
+        if (status == false){
+            pointer+=1;
+        }
+        else{
+            price = await browser.$('//p[@class="hSGhwc-SeJRAd"]').getText();
+
+            //extract the value from the string
+            num_price =  Number(price.replace(/[^0-9.-]+/g,""));
+    
+            //push to collection of prices
+            array_price.push(num_price);
+    
+            //increment to move the pointer
+            pointer += 1;
+           
+
+        }
+        // assert.equal(status, true);
 
         //price variable
-        price = await browser.$('//p[@class="hSGhwc-SeJRAd"]').getText();
-
-        //extract the value from the string
-        num_price =  Number(price.replace(/[^0-9.-]+/g,""));
-
-        //push to collection of prices
-        array_price.push(num_price);
-
-        //increment to move the pointer
-        pointer += 1;
        
 
 
